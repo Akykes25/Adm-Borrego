@@ -28,3 +28,64 @@ select,
 textarea {
   font: inherit;
 }
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+
+  body.is-printing-liquidation {
+    background: white;
+  }
+
+  body.is-printing-liquidation * {
+    visibility: hidden;
+  }
+
+  body.is-printing-liquidation .print-target,
+  body.is-printing-liquidation .print-target * {
+    visibility: visible;
+  }
+
+  body.is-printing-liquidation .print-target {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    overflow: visible !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  body.is-printing-liquidation .no-print {
+    display: none !important;
+  }
+
+  body.is-printing-liquidation .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  body.is-printing-liquidation .liquidation-info-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    align-items: start !important;
+  }
+
+  body.is-printing-liquidation table {
+    width: 100%;
+    page-break-inside: auto;
+  }
+
+  body.is-printing-liquidation tr {
+    page-break-inside: avoid;
+  }
+
+  body.is-printing-liquidation input {
+    border: 0 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    color: inherit !important;
+  }
+}

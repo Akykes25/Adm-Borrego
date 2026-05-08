@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { serviceLinks } from "../data/mockData";
 import { PrimaryButton, SectionTitle, StatusPill } from "../components/ui";
 import { cx } from "../utils/format";
 
@@ -122,6 +123,8 @@ function SelectedTenantServices({ tenant }) {
 }
 
 function ServiceCard({ item }) {
+  const serviceLink = item.paymentLink || serviceLinks[item.service];
+
   return (
     <div className="min-w-0 rounded-2xl border border-stone-200 bg-paper p-4">
       <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -129,7 +132,19 @@ function ServiceCard({ item }) {
           <p className="text-lg font-semibold text-brand">{item.service}</p>
           <p className="mt-1 text-sm text-stone-600">Cuenta {item.account}</p>
         </div>
-        <StatusPill value={item.state} />
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          {serviceLink ? (
+            <a
+              href={serviceLink}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs font-semibold text-brand transition hover:border-brand hover:bg-stone-50"
+            >
+              Abrir portal
+            </a>
+          ) : null}
+          <StatusPill value={item.state} />
+        </div>
       </div>
 
       <div className="mt-4 grid min-w-0 gap-3 text-sm text-stone-700 sm:grid-cols-2">

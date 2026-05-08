@@ -10,7 +10,7 @@ export function PeopleView({ type, people, onCreate, onDetail }) {
         title={isTenant ? "Inquilinos" : "Propietarios"}
         description={getDescription(isTenant)}
         action={
-          <PrimaryButton onClick={() => onCreate(type)}>
+          isTenant ? null : <PrimaryButton onClick={() => onCreate(type)}>
             {isTenant ? "Nuevo inquilino" : "Nuevo propietario"}
           </PrimaryButton>
         }
@@ -73,10 +73,16 @@ function PersonDetails({ person, isTenant }) {
         {Array.isArray(person.link) ? person.link.join(", ") : person.link}
       </p>
       {isTenant && (
-        <p>
-          <span className="font-semibold text-stone-900">Garantes:</span>{" "}
-          {person.guarantors?.length ? person.guarantors.join(", ") : "Sin garantes vinculados"}
-        </p>
+        <>
+          <p>
+            <span className="font-semibold text-stone-900">Garantes:</span>{" "}
+            {person.guarantors?.length ? person.guarantors.join(", ") : "Sin garantes vinculados"}
+          </p>
+          <p>
+            <span className="font-semibold text-stone-900">Archivos de garantes:</span>{" "}
+            {person.guarantorFiles?.length ? person.guarantorFiles.join(", ") : "Sin archivos cargados"}
+          </p>
+        </>
       )}
     </div>
   );

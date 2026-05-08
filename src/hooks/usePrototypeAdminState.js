@@ -48,6 +48,48 @@ function createRecord(target, record, currentLength) {
   }
 }
 
+function createContractFromForm(record, currentLength) {
+  const tenant = [record.tenantName, record.tenantLastName].filter(Boolean).join(" ") || record.contractHolder || "Nuevo inquilino";
+  const landlord = record.landlordType === "Empresa"
+    ? record.landlordBusinessName || record.landlordCompanyName
+    : [record.landlordName, record.landlordLastName].filter(Boolean).join(" ");
+
+  return {
+    id: nextId("CONT", currentLength),
+    ...record,
+    tenant,
+    owner: landlord || "Locador sin completar",
+    end: calculateEndDate(record.start, record.durationMonths),
+    state: "Borrador",
+  };
+}
+
+function createTenantFromContract(record, currentTenants) {
+  const tenantName = [record.tenantName, record.tenantLastName].filter(Boolean).join(" ") || record.contractHolder || "Nuevo inquilino";
+  const guarantorName = [record.guarantorName, record.guarantorLastName].filter(Boolean).join(" ");
+
+  return {
+    id: nextId("TEN", currentTenants.length),
+    name: tenantName,
+    status: "Al día",
+    phone: record.tenantPhone,
+    email: "Sin email cargado",
+    link: record.property,
+    guarantors: guarantorName ? [guarantorName] : [],
+    guarantorFiles: [...(record.guarantorImageFiles || []), ...(record.guarantorPdfFiles || [])],
+  };
+}
+
+function calculateEndDate(start, durationMonths) {
+  const [day, month, year] = String(start || "").split("/").map(Number);
+  const months = Number(durationMonths || 0);
+
+  if (!day || !month || !year || !months) return "Sin calcular";
+
+  const date = new Date(year, month - 1 + months, day);
+  return date.toLocaleDateString("es-AR");
+}
+
 export function usePrototypeAdminState() {
   const [activeModule, setActiveModule] = useState("dashboard");
   const [period, setPeriod] = useState("Mayo 2026");
@@ -152,7 +194,14 @@ export function usePrototypeAdminState() {
     const target = currentConfig.target;
     const updateCollection = collectionSetters[target];
 
-    if (updateCollection) {
+    if (target === "contracts") {
+      setContracts((current) => [createContractFromForm({ ...formValues }, current.length), ...current]);
+      setTenants((current) => {
+        const tenantName = [formValues.tenantName, formValues.tenantLastName].filter(Boolean).join(" ") || formValues.contractHolder;
+        if (current.some((tenant) => tenant.name === tenantName)) return current;
+        return [createTenantFromContract({ ...formValues }, current), ...current];
+      });
+    } else if (updateCollection) {
       updateCollection((current) => [
         createRecord(target, { ...formValues }, current.length),
         ...current,

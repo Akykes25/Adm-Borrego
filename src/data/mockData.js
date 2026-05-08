@@ -19,6 +19,21 @@ export const initialKpis = [
   { title: "Gastos del mes", value: "$ 740.000", detail: "34 movimientos", status: "danger" },
 ];
 
+export const cashflowSeries = [
+  { period: "Ene", income: 6840000, expense: 520000 },
+  { period: "Feb", income: 7120000, expense: 610000 },
+  { period: "Mar", income: 7680000, expense: 690000 },
+  { period: "Abr", income: 8010000, expense: 580000 },
+  { period: "May", income: 8420000, expense: 740000 },
+];
+
+export const expenseBreakdown = [
+  { label: "Reparaciones", amount: 285000, color: "bg-terracotta" },
+  { label: "Servicios", amount: 224000, color: "bg-amber-500" },
+  { label: "Administración", amount: 148000, color: "bg-brand" },
+  { label: "Mantenimiento", amount: 83000, color: "bg-positive" },
+];
+
 export const initialProperties = [
   { id: "PROP-001", address: "Obispo Trejo 872", type: "Departamento", zone: "Nueva Córdoba", owner: "Laura Méndez", tenant: "Matías Correa", status: "Alquilada", rent: "$ 520.000" },
   { id: "PROP-002", address: "Av. Colón 1640", type: "Local", zone: "Alberdi", owner: "Grupo Sarmiento SRL", tenant: "Sin inquilino", status: "Disponible", rent: "$ 780.000" },
@@ -63,6 +78,15 @@ export const initialServices = [
   { service: "Aguas Cordobesas", tenant: "Agustina Prieto", property: "Laprida 244", account: "0042-001-2", responsible: "Inquilino", amount: "$ 14.900", due: "15/05/2026", state: "Pagado", checklist: ["Factura recibida", "Comprobante subido", "Verificado por administración"] },
   { service: "Municipalidad", tenant: "Comercial Norte", property: "Av. Colón 1640", account: "0042-001-3", responsible: "Inquilino", amount: "$ 62.000", due: "20/05/2026", state: "Vencido", checklist: ["Factura recibida", "Comprobante pendiente", "Verificación pendiente"] },
 ];
+
+export const serviceLinks = {
+  "Aguas Cordobesas": "https://www.aguascordobesas.com.ar/",
+  Ecogas: "https://www.ecogas.com.ar/",
+  EPEC: "https://www.epec.com.ar/",
+  Internet: "https://www.argentina.gob.ar/enacom",
+  Municipalidad: "https://tributariomuni.gob.ar/samweb/index.php?r=/objeto/objeto/index&to=1",
+  Rentas: "https://www.rentascordoba.gob.ar/emision/ver-y-pagar",
+};
 
 export const initialSettlements = [
   { owner: "Laura Méndez", period: "Mayo 2026", properties: "1 propiedad", gross: "$ 520.000", discounts: "$ 126.600", net: "$ 393.400", state: "Borrador" },

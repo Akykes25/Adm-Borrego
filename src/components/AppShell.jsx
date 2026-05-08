@@ -14,10 +14,10 @@ export function AppShell({
   onCreate,
 }) {
   return (
-    <div className="flex min-h-screen">
+    <div className="min-h-screen lg:pl-72">
       <Sidebar activeModule={activeModule} onModuleChange={onModuleChange} />
 
-      <main className="min-w-0 flex-1">
+      <main className="min-w-0">
         <Header
           activeModule={activeModule}
           period={period}
@@ -37,7 +37,7 @@ export function AppShell({
 
 function Sidebar({ activeModule, onModuleChange }) {
   return (
-    <aside className="hidden w-72 shrink-0 bg-brand p-5 text-white lg:flex lg:flex-col">
+    <aside className="fixed inset-y-0 left-0 z-40 hidden h-screen w-72 shrink-0 bg-brand p-5 text-white lg:flex lg:flex-col">
       <div className="rounded-2xl bg-white/10 p-5">
         <div className="flex items-center gap-3">
           <TextMark large active>

@@ -18,6 +18,15 @@ runPrototypeSmokeTests();
 
 export default function App() {
   const admin = usePrototypeAdminState();
+  const content = (
+    <MainContent
+      activeModule={admin.activeModule}
+      data={admin.data}
+      onCreate={admin.openCreate}
+      onQuickAction={admin.handleQuickAction}
+      onDetail={admin.openDetail}
+    />
+  );
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-paper font-sans text-ink">
@@ -31,13 +40,7 @@ export default function App() {
         onQueryChange={admin.setQuery}
         onCreate={admin.openCreate}
       >
-        <MainContent
-          activeModule={admin.activeModule}
-          data={admin.data}
-          onCreate={admin.openCreate}
-          onQuickAction={admin.handleQuickAction}
-          onDetail={admin.openDetail}
-        />
+        {content}
       </AppShell>
 
       <CreationPanel

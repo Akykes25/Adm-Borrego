@@ -7,7 +7,8 @@ export function nextId(prefix, length) {
 }
 
 export function getDefaultFormValues(config) {
-  return Object.fromEntries(config.fields.map((field) => [field.name, field.defaultValue ?? ""]));
+  const fields = config.fields || (config.steps || []).flatMap((step) => step.fields || []);
+  return Object.fromEntries(fields.map((field) => [field.name, field.defaultValue ?? ""]));
 }
 
 export function includesQuery(row, query) {

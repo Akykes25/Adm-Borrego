@@ -55,7 +55,7 @@ export function MainContent({ activeModule, data, onCreate, onQuickAction, onDet
     case "settings":
       return <SettingsView settings={filtered.settings} onCreate={onCreate} />;
     default:
-      return <DashboardView collections={filtered.collections} onCreate={onCreate} onQuickAction={onQuickAction} />;
+      return <DashboardView collections={filtered.collections} period={filtered.period} onCreate={onCreate} onQuickAction={onQuickAction} />;
   }
 }
 
