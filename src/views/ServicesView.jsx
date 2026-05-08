@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { serviceLinks } from "../data/mockData";
-import { PrimaryButton, SectionTitle, StatusPill } from "../components/ui";
+import { DataTable, PrimaryButton, SectionTitle, StatusPill } from "../components/ui";
 import { cx } from "../utils/format";
 
 const defaultChecklist = ["Factura recibida", "Comprobante subido", "Verificado por administración"];
@@ -18,11 +18,11 @@ export function ServicesView({ services, tenants, onCreate }) {
       <SectionTitle
         eyebrow="Servicios por inquilino"
         title="Servicios"
-        description="Seleccioná un inquilino para ver qué servicios paga, monto estimado, vencimiento, estado y comprobantes asociados."
+        description="Seleccioná un inquilino para ver las cuentas de servicios asociadas, responsables, portales externos y comprobantes."
         action={<PrimaryButton onClick={() => onCreate("services")}>Nuevo servicio</PrimaryButton>}
       />
 
-      <TenantServiceGrid
+      <TenantServiceList
         tenants={tenantsWithServices}
         selectedTenant={selectedTenant}
         onSelectTenant={setSelectedTenantName}
@@ -33,55 +33,38 @@ export function ServicesView({ services, tenants, onCreate }) {
   );
 }
 
-function TenantServiceGrid({ tenants, selectedTenant, onSelectTenant }) {
+function TenantServiceList({ tenants, selectedTenant, onSelectTenant }) {
   return (
-    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-      {tenants.map((tenant) => (
-        <TenantServiceCard
+    <DataTable
+      columns={["Inquilino", "Propiedad", "Servicios", "Estado", "Acción"]}
+      rows={tenants}
+      renderRow={(tenant) => (
+        <TenantServiceRow
           key={tenant.name}
           tenant={tenant}
           isSelected={selectedTenant?.name === tenant.name}
           onSelect={() => onSelectTenant(tenant.name)}
         />
-      ))}
-    </div>
+      )}
+    />
   );
 }
 
-function TenantServiceCard({ tenant, isSelected, onSelect }) {
-  const nextDue = tenant.services[0]?.due || "Sin vencimientos";
-
+function TenantServiceRow({ tenant, isSelected, onSelect }) {
   return (
-    <button
-      type="button"
-      onClick={onSelect}
+    <tr
       className={cx(
-        "rounded-2xl border bg-white p-6 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-brand hover:shadow-md focus:outline-none focus:ring-4 focus:ring-brand/10",
-        isSelected ? "border-brand ring-4 ring-brand/10" : "border-stone-200",
+        "cursor-pointer transition hover:bg-stone-50",
+        isSelected && "bg-sand/70",
       )}
+      onClick={onSelect}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
-            Perfil del inquilino
-          </p>
-          <h2 className="mt-2 text-xl font-semibold text-brand">{tenant.name}</h2>
-          <p className="mt-1 text-sm text-stone-500">{tenant.link}</p>
-        </div>
-        <StatusPill value={tenant.status} />
-      </div>
-
-      <div className="mt-5 grid gap-3 text-sm text-stone-700 sm:grid-cols-2">
-        <p>
-          <span className="font-semibold text-stone-900">Servicios:</span> {tenant.services.length}
-        </p>
-        <p>
-          <span className="font-semibold text-stone-900">Próximo venc.:</span> {nextDue}
-        </p>
-      </div>
-
-      <p className="mt-5 text-sm font-semibold text-brand">Ver servicios</p>
-    </button>
+      <td className="px-5 py-4 font-semibold text-brand">{tenant.name}</td>
+      <td className="px-5 py-4">{tenant.link}</td>
+      <td className="px-5 py-4">{tenant.services.length}</td>
+      <td className="px-5 py-4"><StatusPill value={tenant.status} /></td>
+      <td className="px-5 py-4 text-sm font-semibold text-brand">Ver servicios</td>
+    </tr>
   );
 }
 
@@ -89,7 +72,7 @@ function SelectedTenantServices({ tenant }) {
   if (!tenant) {
     return (
       <div className="rounded-2xl border border-dashed border-stone-300 bg-paper p-6 text-sm text-stone-600">
-        Seleccioná una tarjeta de inquilino para ver sus servicios.
+        Seleccioná un inquilino de la lista para ver sus servicios.
       </div>
     );
   }
@@ -107,11 +90,24 @@ function SelectedTenantServices({ tenant }) {
         <StatusPill value={`${tenant.services.length} servicios`} />
       </div>
 
-      <div className="mt-5 grid min-w-0 gap-4 xl:grid-cols-2">
+      <div className="mt-5 overflow-x-auto">
         {tenant.services.length ? (
-          tenant.services.map((item) => (
-            <ServiceCard key={item.id || `${item.service}-${item.account}`} item={item} />
-          ))
+          <table className="w-full min-w-[820px] text-left text-sm">
+            <thead className="bg-paper text-xs uppercase tracking-wide text-stone-500">
+              <tr>
+                <th className="px-4 py-3 font-semibold">Servicio</th>
+                <th className="px-4 py-3 font-semibold">Cuenta</th>
+                <th className="px-4 py-3 font-semibold">Responsable</th>
+                <th className="px-4 py-3 font-semibold">Propiedad</th>
+                <th className="px-4 py-3 font-semibold">Estado</th>
+                <th className="px-4 py-3 font-semibold">Portal</th>
+                <th className="px-4 py-3 font-semibold">Comprobantes</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-stone-100">
+              {tenant.services.map((item) => <ServiceRow key={item.id || `${item.service}-${item.account}`} item={item} />)}
+            </tbody>
+          </table>
         ) : (
           <div className="rounded-2xl border border-dashed border-stone-300 bg-paper p-4 text-sm text-stone-600">
             Sin servicios cargados para este inquilino.
@@ -122,40 +118,21 @@ function SelectedTenantServices({ tenant }) {
   );
 }
 
-function ServiceCard({ item }) {
+function ServiceRow({ item }) {
   const serviceLink = item.paymentLink || serviceLinks[item.service];
 
   return (
-    <div className="min-w-0 rounded-2xl border border-stone-200 bg-paper p-4">
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-lg font-semibold text-brand">{item.service}</p>
-          <p className="mt-1 text-sm text-stone-600">Cuenta {item.account}</p>
-        </div>
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
-          {serviceLink ? (
-            <a
-              href={serviceLink}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-stone-300 bg-white px-3 py-1 text-xs font-semibold text-brand transition hover:border-brand hover:bg-stone-50"
-            >
-              Abrir portal
-            </a>
-          ) : null}
-          <StatusPill value={item.state} />
-        </div>
-      </div>
-
-      <div className="mt-4 grid min-w-0 gap-3 text-sm text-stone-700 sm:grid-cols-2">
-        <p><span className="font-semibold text-stone-900">Monto:</span> {item.amount}</p>
-        <p><span className="font-semibold text-stone-900">Vencimiento:</span> {item.due}</p>
-        <p><span className="font-semibold text-stone-900">Responsable:</span> {item.responsible}</p>
-        <p><span className="font-semibold text-stone-900">Propiedad:</span> {item.property}</p>
-      </div>
-
-      <ServiceChecklist item={item} />
-    </div>
+    <tr className="hover:bg-stone-50">
+      <td className="px-4 py-4 font-semibold text-brand">{item.service}</td>
+      <td className="px-4 py-4">{item.account}</td>
+      <td className="px-4 py-4">{item.responsible}</td>
+      <td className="px-4 py-4">{item.property}</td>
+      <td className="px-4 py-4"><StatusPill value={item.state} /></td>
+      <td className="px-4 py-4">
+        {serviceLink ? <a href={serviceLink} target="_blank" rel="noreferrer" className="font-semibold text-brand underline-offset-4 hover:underline">Abrir portal</a> : "Sin portal"}
+      </td>
+      <td className="px-4 py-4"><ServiceChecklist item={item} /></td>
+    </tr>
   );
 }
 
@@ -169,17 +146,16 @@ function ServiceChecklist({ item }) {
   }
 
   return (
-    <div className="mt-5 min-w-0 rounded-xl border border-stone-200 bg-white p-4">
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm font-semibold text-brand">Comprobantes</p>
+    <div className="min-w-[240px] rounded-xl border border-stone-200 bg-white p-3">
+      <div className="flex min-w-0 flex-col gap-3">
         <input
           type="file"
           accept="image/*,.pdf"
-          className="w-full min-w-0 text-xs text-stone-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white sm:w-auto"
+          className="w-full min-w-0 text-xs text-stone-600 file:mr-3 file:rounded-lg file:border-0 file:bg-brand file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white"
         />
       </div>
 
-      <div className="mt-4 grid min-w-0 gap-2 sm:grid-cols-3">
+      <div className="mt-3 grid min-w-0 gap-2">
         {(item.checklist || defaultChecklist).map((task, taskIndex) => (
           <label
             key={`${task}-${taskIndex}`}

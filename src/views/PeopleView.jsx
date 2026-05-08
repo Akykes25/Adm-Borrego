@@ -1,4 +1,4 @@
-import { PrimaryButton, SecondaryButton, SectionTitle, StatusPill } from "../components/ui";
+import { DataTable, PrimaryButton, SecondaryButton, SectionTitle, StatusPill } from "../components/ui";
 
 export function PeopleView({ type, people, onCreate, onDetail }) {
   const isTenant = type === "tenants";
@@ -16,16 +16,7 @@ export function PeopleView({ type, people, onCreate, onDetail }) {
         }
       />
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {people.map((person) => (
-          <PersonCard
-            key={person.id || person.name}
-            person={person}
-            isTenant={isTenant}
-            onDetail={onDetail}
-          />
-        ))}
-      </div>
+      <PeopleList people={people} isTenant={isTenant} onDetail={onDetail} />
     </div>
   );
 }
@@ -36,54 +27,39 @@ function getDescription(isTenant) {
     : "Gestión de datos personales, información fiscal, propiedades asociadas, saldos y liquidaciones mensuales.";
 }
 
-function PersonCard({ person, isTenant, onDetail }) {
-  const title = isTenant ? "Inquilino" : "Propietario";
-
+function PeopleList({ people, isTenant, onDetail }) {
   return (
-    <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-lg font-semibold text-brand">{person.name}</p>
-          <p className="mt-1 text-sm text-stone-500">
-            {isTenant ? "Contrato activo" : "Propietario activo"}
-          </p>
-        </div>
-        <StatusPill value={person.status} />
-      </div>
-
-      <PersonDetails person={person} isTenant={isTenant} />
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        <SecondaryButton onClick={() => onDetail(title, person)}>Ver ficha</SecondaryButton>
-        <SecondaryButton>{isTenant ? "Portal" : "Liquidar"}</SecondaryButton>
-      </div>
-    </div>
+    <DataTable
+      columns={["Nombre", "Contacto", isTenant ? "Propiedad" : "Propiedades", isTenant ? "Garantes" : "Estado", "Acciones"]}
+      rows={people}
+      renderRow={(person) => <PersonRow key={person.id || person.name} person={person} isTenant={isTenant} onDetail={onDetail} />}
+    />
   );
 }
 
-function PersonDetails({ person, isTenant }) {
+function PersonRow({ person, isTenant, onDetail }) {
+  const title = isTenant ? "Inquilino" : "Propietario";
+
   return (
-    <div className="mt-5 space-y-3 text-sm text-stone-600">
-      <p><span className="font-semibold text-stone-900">Teléfono:</span> {person.phone}</p>
-      <p><span className="font-semibold text-stone-900">Email:</span> {person.email}</p>
-      <p>
-        <span className="font-semibold text-stone-900">
-          {isTenant ? "Propiedad vinculada" : "Propiedades asociadas"}:
-        </span>{" "}
-        {Array.isArray(person.link) ? person.link.join(", ") : person.link}
-      </p>
-      {isTenant && (
-        <>
-          <p>
-            <span className="font-semibold text-stone-900">Garantes:</span>{" "}
-            {person.guarantors?.length ? person.guarantors.join(", ") : "Sin garantes vinculados"}
-          </p>
-          <p>
-            <span className="font-semibold text-stone-900">Archivos de garantes:</span>{" "}
-            {person.guarantorFiles?.length ? person.guarantorFiles.join(", ") : "Sin archivos cargados"}
-          </p>
-        </>
-      )}
-    </div>
+    <tr className="hover:bg-stone-50">
+      <td className="px-5 py-4">
+        <p className="font-semibold text-brand">{person.name}</p>
+        <p className="mt-1 text-xs text-stone-500">{isTenant ? "Contrato activo" : "Propietario activo"}</p>
+      </td>
+      <td className="px-5 py-4">
+        <p>{person.phone}</p>
+        <p className="mt-1 text-xs text-stone-500">{person.email}</p>
+      </td>
+      <td className="px-5 py-4">{Array.isArray(person.link) ? person.link.join(", ") : person.link}</td>
+      <td className="px-5 py-4">
+        {isTenant ? person.guarantors?.length ? person.guarantors.join(", ") : "Sin garantes" : <StatusPill value={person.status} />}
+      </td>
+      <td className="px-5 py-4">
+        <div className="flex flex-wrap gap-2">
+          <SecondaryButton onClick={() => onDetail(title, person)}>Ver ficha</SecondaryButton>
+          <SecondaryButton>{isTenant ? "Portal" : "Liquidar"}</SecondaryButton>
+        </div>
+      </td>
+    </tr>
   );
 }

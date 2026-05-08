@@ -37,8 +37,8 @@ export function AppShell({
 
 function Sidebar({ activeModule, onModuleChange }) {
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden h-screen w-72 shrink-0 bg-brand p-5 text-white lg:flex lg:flex-col">
-      <div className="rounded-2xl bg-white/10 p-5">
+    <aside className="app-sidebar fixed inset-y-0 left-0 z-40 hidden h-screen w-72 shrink-0 overflow-y-auto bg-brand p-4 text-white lg:flex lg:flex-col xl:p-5">
+      <div className="rounded-2xl bg-white/10 p-4 xl:p-5">
         <div className="flex items-center gap-3">
           <TextMark large active>
             AD
@@ -50,7 +50,7 @@ function Sidebar({ activeModule, onModuleChange }) {
         </div>
       </div>
 
-      <nav className="mt-6 flex-1 space-y-1">
+      <nav className="mt-5 flex-1 space-y-1 pb-4">
         {modules.map((item) => (
           <ModuleButton
             key={item.id}
@@ -61,7 +61,7 @@ function Sidebar({ activeModule, onModuleChange }) {
         ))}
       </nav>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-white/70">
+      <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-white/70">
         <p className="font-semibold text-white">Prototipo visual</p>
         <p className="mt-1">Datos temporales en memoria, sin base de datos ni backend.</p>
       </div>
@@ -74,7 +74,7 @@ function ModuleButton({ module, isActive, onClick }) {
     <button
       onClick={onClick}
       className={cx(
-        "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition",
+        "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition xl:px-4 xl:py-3",
         isActive ? "bg-sand text-brand" : "text-white/75 hover:bg-white/10 hover:text-white",
       )}
     >
@@ -102,8 +102,8 @@ function Header({
   onQueryChange,
 }) {
   return (
-    <header className="sticky top-0 z-30 border-b border-stone-200 bg-paper/90 px-4 py-4 backdrop-blur sm:px-5 lg:px-8">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+    <header className="sticky top-0 z-30 border-b border-stone-200 bg-paper/90 px-4 py-3 backdrop-blur sm:px-5 lg:px-8 lg:py-4">
+      <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
         <MobileBrand />
         <SearchInput query={query} onQueryChange={onQueryChange} />
         <HeaderActions
@@ -142,13 +142,13 @@ function MobileBrand() {
 function SearchInput({ query, onQueryChange }) {
   return (
     <div className="relative max-w-xl flex-1">
-      <span className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-stone-400">
+      <span className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 rounded-full border-2 border-stone-400 sm:left-4">
         <span className="absolute -bottom-1 -right-1 h-2.5 w-0.5 rotate-[-45deg] rounded-full bg-stone-400" />
       </span>
       <input
         value={query}
         onChange={(event) => onQueryChange(event.target.value)}
-        className="w-full rounded-2xl border border-stone-200 bg-white py-3 pl-12 pr-4 text-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
+        className="w-full rounded-2xl border border-stone-200 bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-brand/10 sm:py-3 sm:pl-12"
         placeholder="Buscar propiedad, inquilino, propietario, contrato o unidad"
       />
     </div>
@@ -157,7 +157,7 @@ function SearchInput({ query, onQueryChange }) {
 
 function HeaderActions({ activeModule, period, onCreate, onPeriodChange }) {
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
       <select
         value={period}
         onChange={(event) => onPeriodChange(event.target.value)}

@@ -4,6 +4,7 @@ export const modules = [
   { id: "contracts", label: "Contratos", mark: "CT" },
   { id: "tenants", label: "Inquilinos", mark: "IQ" },
   { id: "owners", label: "Propietarios", mark: "PO" },
+  { id: "cashbox", label: "Caja", mark: "CJ" },
   { id: "collections", label: "Cobros", mark: "CB" },
   { id: "expenses", label: "Gastos", mark: "GT" },
   { id: "services", label: "Servicios", mark: "SV" },
@@ -14,9 +15,9 @@ export const modules = [
 
 export const initialKpis = [
   { title: "Total cobrado", value: "$ 8.420.000", detail: "Mayo 2026", status: "positive" },
-  { title: "Pendiente de cobro", value: "$ 1.180.000", detail: "12 operaciones", status: "warning" },
-  { title: "A liquidar", value: "$ 6.970.000", detail: "18 propietarios", status: "neutral" },
   { title: "Gastos del mes", value: "$ 740.000", detail: "34 movimientos", status: "danger" },
+  { title: "Total caja", value: "$ 7.680.000", detail: "Total cobrado - gastos del mes", status: "neutral" },
+  { title: "Pendiente de cobro", value: "$ 1.180.000", detail: "12 operaciones", status: "warning" },
 ];
 
 export const cashflowSeries = [

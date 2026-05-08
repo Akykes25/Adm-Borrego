@@ -116,6 +116,15 @@ export function buildCreateConfigs(data) {
       { name: "link", label: "Propiedades asociadas", type: "multiSelect", options: propertyOptions, defaultValue: propertyOptions.slice(0, 1) },
       { name: "status", label: "Estado", type: "select", options: ["Al día", "Revisar", "Pendiente"], defaultValue: "Al día" },
     ] },
+    cashbox: { target: "collections", title: "Registrar movimiento de caja", subtitle: "Carga un movimiento administrativo para seguimiento de caja inmobiliaria.", submitLabel: "Registrar movimiento", fields: [
+      { name: "period", label: "Período", type: "select", options: periods, defaultValue: data.period },
+      { name: "tenant", label: "Persona asociada", type: "select", options: tenantOptions, defaultValue: tenantOptions[0] || "Administración" },
+      { name: "property", label: "Administración / propiedad", type: "select", options: [...propertyOptions, "General"], defaultValue: "General" },
+      { name: "concept", label: "Concepto", defaultValue: "Movimiento de caja" },
+      { name: "amount", label: "Importe", defaultValue: "$ 0" },
+      { name: "paid", label: "Aplicado", defaultValue: "$ 0" },
+      { name: "state", label: "Estado", type: "select", options: ["Pendiente", "Pagado", "Parcial", "Vencido"], defaultValue: "Pagado" },
+    ] },
     collections: { target: "collections", title: "Registrar cobro", subtitle: "Simula un pago total, parcial o pendiente.", submitLabel: "Registrar cobro", fields: [
       { name: "period", label: "Período", type: "select", options: periods, defaultValue: data.period },
       { name: "tenant", label: "Inquilino", type: "select", options: tenantOptions, defaultValue: tenantOptions[0] || "Nuevo inquilino" },

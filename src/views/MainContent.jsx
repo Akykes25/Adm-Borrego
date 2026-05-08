@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { includesQuery } from "../utils/format";
 import { CollectionsView } from "./CollectionsView";
+import { CashboxView } from "./CashboxView";
 import { CondosView } from "./CondosView";
 import { ContractsView } from "./ContractsView";
 import { DashboardView } from "./DashboardView";
@@ -25,6 +26,9 @@ export function MainContent({ activeModule, data, onCreate, onQuickAction, onDet
       owners: data.owners.filter((row) => includesQuery(row, query)),
       collections: data.collections.filter((row) => includesQuery(row, query)),
       expenses: data.expenses.filter((row) => includesQuery(row, query)),
+      cashboxCollections: data.collections.filter((row) => includesQuery(row, query)),
+      cashboxExpenses: data.expenses.filter((row) => includesQuery(row, query)),
+      cashboxSettlements: data.settlements.filter((row) => includesQuery(row, query)),
       serviceTenants: filterTenantsByServices(data.tenants, services, query),
       services,
       settlements: data.settlements.filter((row) => includesQuery(row, query)),
@@ -42,6 +46,8 @@ export function MainContent({ activeModule, data, onCreate, onQuickAction, onDet
       return <PeopleView type="tenants" people={filtered.tenants} onCreate={onCreate} onDetail={onDetail} />;
     case "owners":
       return <PeopleView type="owners" people={filtered.owners} onCreate={onCreate} onDetail={onDetail} />;
+    case "cashbox":
+      return <CashboxView collections={filtered.cashboxCollections} expenses={filtered.cashboxExpenses} settlements={filtered.cashboxSettlements} period={filtered.period} onCreate={onCreate} />;
     case "collections":
       return <CollectionsView collections={filtered.collections} onCreate={onCreate} />;
     case "expenses":

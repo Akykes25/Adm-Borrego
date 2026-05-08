@@ -63,22 +63,30 @@ function ContractWizard({ config, values, onChange, onClose, onSubmit }) {
     setCurrentStep((current) => Math.min(current + 1, config.steps.length - 1));
   }
 
+  function handleWizardSubmit(event) {
+    event.preventDefault();
+
+    if (!isLastStep) {
+      goNext();
+    }
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand/35 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-brand/35 p-2 backdrop-blur-sm sm:p-4">
       <button aria-label="Cerrar formulario" className="absolute inset-0 cursor-default" onClick={onClose} />
 
       <form
-        onSubmit={onSubmit}
-        className="relative flex h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border border-stone-200 bg-paper shadow-2xl"
+        onSubmit={handleWizardSubmit}
+        className="relative flex h-[calc(100dvh-1rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-stone-200 bg-paper shadow-2xl sm:h-[92dvh] sm:rounded-3xl"
       >
-        <div className="border-b border-stone-200 bg-white px-6 py-5">
-          <div className="flex items-start justify-between gap-4">
+        <div className="shrink-0 border-b border-stone-200 bg-white px-4 py-4 sm:px-6 sm:py-5">
+          <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
                 Carga de contrato
               </p>
-              <h2 className="mt-2 text-2xl font-semibold text-brand">{config.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-stone-600">{config.subtitle}</p>
+              <h2 className="mt-2 text-xl font-semibold text-brand sm:text-2xl">{config.title}</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">{config.subtitle}</p>
             </div>
 
             <button
@@ -93,10 +101,8 @@ function ContractWizard({ config, values, onChange, onClose, onSubmit }) {
           <WizardProgress steps={config.steps} currentStep={currentStep} />
         </div>
 
-        <div className="grid min-h-0 flex-1 lg:grid-cols-[280px_1fr]">
-          <WizardStepList steps={config.steps} currentStep={currentStep} onStepSelect={setCurrentStep} />
-
-          <div className="min-h-0 overflow-y-auto px-6 py-6">
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <div className="h-full min-h-0 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
             <div className="mb-6 rounded-2xl border border-stone-200 bg-white p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
                 Paso {currentStep + 1} de {config.steps.length}
@@ -119,17 +125,17 @@ function ContractWizard({ config, values, onChange, onClose, onSubmit }) {
           </div>
         </div>
 
-        <div className="border-t border-stone-200 bg-white px-6 py-4">
+        <div className="shrink-0 border-t border-stone-200 bg-white px-4 py-4 sm:px-6">
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs leading-5 text-stone-500">
               Los archivos se guardan como referencia temporal en este prototipo.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3 sm:flex-nowrap">
               <SecondaryButton onClick={isFirstStep ? onClose : goBack}>
                 {isFirstStep ? "Cancelar" : "Anterior"}
               </SecondaryButton>
               {isLastStep ? (
-                <PrimaryButton type="submit">{config.submitLabel}</PrimaryButton>
+                <PrimaryButton onClick={onSubmit}>{config.submitLabel}</PrimaryButton>
               ) : (
                 <PrimaryButton onClick={goNext}>Siguiente</PrimaryButton>
               )}
@@ -143,7 +149,7 @@ function ContractWizard({ config, values, onChange, onClose, onSubmit }) {
 
 function WizardProgress({ steps, currentStep }) {
   return (
-    <div className="mt-5 grid gap-2 sm:grid-cols-6 lg:grid-cols-11">
+    <div className="mt-5 grid gap-2" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
       {steps.map((step, index) => (
         <div
           key={step.title}
@@ -154,34 +160,6 @@ function WizardProgress({ steps, currentStep }) {
         />
       ))}
     </div>
-  );
-}
-
-function WizardStepList({ steps, currentStep, onStepSelect }) {
-  return (
-    <aside className="hidden border-r border-stone-200 bg-white p-4 lg:block">
-      <div className="space-y-2">
-        {steps.map((step, index) => (
-          <button
-            key={step.title}
-            type="button"
-            onClick={() => onStepSelect(index)}
-            className={cx(
-              "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm transition",
-              currentStep === index ? "bg-brand text-white" : "text-stone-600 hover:bg-paper",
-            )}
-          >
-            <span className={cx(
-              "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-semibold",
-              currentStep === index ? "bg-white text-brand" : "bg-paper text-brand",
-            )}>
-              {index + 1}
-            </span>
-            <span className="font-semibold">{step.title}</span>
-          </button>
-        ))}
-      </div>
-    </aside>
   );
 }
 

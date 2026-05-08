@@ -13,8 +13,8 @@ const metricCards = [
   },
   {
     ...initialKpis[1],
-    icon: WarningIcon,
-    accent: "text-terracotta",
+    icon: ReceiptIcon,
+    accent: "text-stone-600",
   },
   {
     ...initialKpis[2],
@@ -23,8 +23,8 @@ const metricCards = [
   },
   {
     ...initialKpis[3],
-    icon: ReceiptIcon,
-    accent: "text-stone-600",
+    icon: WarningIcon,
+    accent: "text-terracotta",
   },
 ];
 
@@ -51,7 +51,7 @@ export function DashboardView({ collections, period, onQuickAction }) {
 
       <TopMetricGrid />
 
-      <section className="grid grid-cols-12 gap-5">
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-12">
         <IncomeExpensePanel />
         <ExpenseDistributionPanel />
         <CollectionRatePanel collections={periodCollections} period={period} />
@@ -70,7 +70,7 @@ export function DashboardView({ collections, period, onQuickAction }) {
 
 function DashboardHeader() {
   return (
-    <header className="mb-4 flex items-end justify-between gap-6">
+    <header className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
       <div>
         <h1 className="text-[24px] font-bold leading-8 tracking-[-0.02em] text-brand">
           Natalia Borrego
@@ -80,7 +80,7 @@ function DashboardHeader() {
         </p>
       </div>
 
-      <p className="pb-1 text-right text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500">
+      <p className="pb-1 text-left text-[10px] font-semibold uppercase tracking-[0.18em] text-stone-500 sm:text-right">
         Resumen actualizado
       </p>
     </header>
@@ -89,7 +89,7 @@ function DashboardHeader() {
 
 function TopMetricGrid() {
   return (
-    <section className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
+    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {metricCards.map((metric) => (
         <MetricCard key={metric.title} metric={metric} />
       ))}
@@ -99,7 +99,7 @@ function TopMetricGrid() {
 
 function MetricCard({ metric }) {
   return (
-    <article className="flex min-h-[142px] flex-col justify-between rounded border border-[#c4c5d5] bg-white p-4">
+    <article className="flex min-h-[118px] flex-col justify-between rounded border border-[#c4c5d5] bg-white p-4 sm:min-h-[132px]">
       <div className="mb-3 flex items-start justify-between gap-4">
         <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-stone-500">
           {metric.title}
@@ -108,7 +108,7 @@ function MetricCard({ metric }) {
       </div>
 
       <div>
-        <p className="text-[24px] font-bold leading-8 tracking-[-0.02em] text-ink">
+        <p className="text-[22px] font-bold leading-8 tracking-[-0.02em] text-ink sm:text-[24px]">
           {metric.value}
         </p>
       </div>
@@ -130,15 +130,15 @@ function IncomeExpensePanel() {
   );
 
   return (
-    <DashboardPanel className="col-span-12 lg:col-span-8">
+    <DashboardPanel className="xl:col-span-8">
       <PanelTitleRow title="Ingresos vs Gastos Mensuales">
         <ChartLegend />
       </PanelTitleRow>
 
-      <div className="relative mt-8 h-[360px] w-full">
+      <div className="relative mt-6 h-[260px] w-full sm:h-[320px] lg:h-[360px]">
         <HorizontalGrid />
 
-        <div className="absolute inset-0 flex items-end justify-between px-4 pb-2">
+        <div className="absolute inset-0 flex items-end justify-between px-1 pb-2 sm:px-4">
           {chartSeries.map((item) => (
             <ChartColumn
               key={`${item.period}-income`}
@@ -150,7 +150,7 @@ function IncomeExpensePanel() {
           ))}
         </div>
 
-        <div className="absolute inset-0 flex items-end justify-between px-4 pb-2">
+        <div className="absolute inset-0 flex items-end justify-between px-1 pb-2 sm:px-4">
           {chartSeries.map((item) => (
             <ChartColumn
               key={`${item.period}-expense`}
@@ -163,7 +163,7 @@ function IncomeExpensePanel() {
         </div>
       </div>
 
-      <div className="mt-5 flex justify-between px-4 text-[12px] font-semibold uppercase tracking-wide text-stone-500">
+      <div className="mt-4 flex justify-between px-1 text-[11px] font-semibold uppercase tracking-wide text-stone-500 sm:px-4 sm:text-[12px]">
         {chartSeries.map((item) => (
           <span key={item.period}>{item.period}</span>
         ))}
@@ -204,7 +204,7 @@ function ChartColumn({ label, value, maxValue, className }) {
   const height = Math.max((value / maxValue) * 100, 8);
 
   return (
-    <div className="group relative flex h-full w-10 items-end">
+    <div className="group relative flex h-full w-5 items-end sm:w-8 lg:w-10">
       <div
         className={cx("w-full rounded-t transition group-hover:opacity-100", className)}
         style={{ height: `${height}%` }}
@@ -222,10 +222,10 @@ function ExpenseDistributionPanel() {
   const totalExpenses = expenseBreakdown.reduce((total, item) => total + item.amount, 0);
 
   return (
-    <DashboardPanel className="col-span-12 flex flex-col lg:col-span-4">
+    <DashboardPanel className="flex flex-col xl:col-span-4">
       <PanelTitleRow title="Distribución de Gastos" />
 
-      <div className="mt-8 space-y-8">
+      <div className="mt-6 space-y-5 sm:space-y-8">
         {expenseRows.map((item) => (
           <DistributionRow
             key={item.label}
@@ -269,19 +269,12 @@ function DistributionRow({ label, percentage, amount, color }) {
 
 function CollectionRatePanel({ collections, period }) {
   const collectionRateRows = buildCollectionRateRows(collections);
-  const averageRate = collectionRateRows.length
-    ? Math.round(collectionRateRows.reduce((sum, item) => sum + item.rate, 0) / collectionRateRows.length)
-    : 0;
 
   return (
-    <DashboardPanel className="col-span-12 lg:col-span-6">
-      <PanelTitleRow title={`Tasa de Cobro por Propiedad - ${period}`}>
-        <span className="rounded bg-emerald-100 px-2 py-1 text-[11px] font-bold text-positive">
-          Avg. {averageRate}%
-        </span>
-      </PanelTitleRow>
+    <DashboardPanel className="xl:col-span-6">
+      <PanelTitleRow title={`Tasa de Cobro por Propiedad - ${period}`} />
 
-      <div className="mt-8 space-y-6">
+      <div className="mt-6 space-y-5 sm:space-y-6">
         {collectionRateRows.map((item) => (
           <CollectionRateRow key={item.property} item={item} />
         ))}
@@ -314,8 +307,8 @@ function PaymentsStatusPanel({ collections }) {
   const hasAlerts = collections.some((item) => item.state !== "Pagado");
 
   return (
-    <DashboardPanel className="col-span-12 flex flex-col lg:col-span-6">
-      <PanelTitleRow title="Estado de Pagos por Inmueble">
+    <DashboardPanel className="flex flex-col xl:col-span-6">
+      <PanelTitleRow title="Estado de Deuda por Inmueble">
         {hasAlerts ? <WarningBadge /> : null}
       </PanelTitleRow>
 
@@ -371,7 +364,7 @@ function PaymentStatusRow({ item }) {
 function PendingDetailsPanel({ collections, onViewAll }) {
   return (
     <section className="overflow-hidden rounded border border-stone-300 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-stone-200 p-6">
+      <div className="flex flex-col gap-3 border-b border-stone-200 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-6">
         <h2 className="text-[18px] font-semibold leading-6 tracking-[-0.01em] text-ink">
           Detalle de Pagos de Inmuebles
         </h2>
@@ -441,7 +434,7 @@ function PendingDetailRow({ item }) {
 
 function DashboardPanel({ children, className }) {
   return (
-    <article className={cx("rounded border border-[#c4c5d5] bg-white p-8", className)}>
+    <article className={cx("rounded border border-[#c4c5d5] bg-white p-4 sm:p-6 lg:p-8", className)}>
       {children}
     </article>
   );
@@ -449,7 +442,7 @@ function DashboardPanel({ children, className }) {
 
 function PanelTitleRow({ title, children }) {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <h2 className="text-[18px] font-semibold leading-6 tracking-[-0.01em] text-ink">
         {title}
       </h2>
